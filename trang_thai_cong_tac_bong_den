@@ -1,1 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công tắc và Bóng đèn</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .simulation {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .lamp {
+            width: 120px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .lamp-top {
+            width: 80px;
+            height: 30px;
+            background-color: #7f8c8d;
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+        
+        .lamp-neck {
+            width: 15px;
+            height: 70px;
+            background-color: #7f8c8d;
+            margin: 0 auto;
+        }
+        
+        .lamp-bulb {
+            width: 80px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            margin: 0 auto;
+            border: 2px solid #bdc3c7;
+            transition: all 0.3s ease;
+        }
+        
+        .lamp.on .lamp-bulb {
+            background-color: #f1c40f;
+            box-shadow: 0 0 40px 20px rgba(241, 196, 15, 0.7);
+        }
+        
+        .switch {
+            width: 70px;
+            height: 120px;
+            background-color: #7f8c8d;
+            margin: 30px auto;
+            border-radius: 35px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .switch-handle {
+            width: 50px;
+            height: 20px;
+            background-color: #e74c3c;
+            border-radius: 10px;
+            position: absolute;
+            left: 10px;
+            transition: top 0.3s ease;
+        }
+        
+        .switch.off .switch-handle {
+            top: 20px;
+        }
+        
+        .switch.on .switch-handle {
+            top: 80px;
+        }
+        
+        .status {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .lamp.off .status {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .lamp.on .status {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .log {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-entry:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .diagram {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .diagram img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .code {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mô phỏng Công tắc và Bóng đèn</h1>
+        <p>Sử dụng lập trình hướng đối tượng trong JavaScript</p>
+    </header>
+    
+    <div class="container">
+        <div class="simulation">
+            <h2>Mô phỏng trực quan</h2>
+            
+            <div class="lamp off" id="lamp">
+                <div class="lamp-top"></div>
+                <div class="lamp-neck"></div>
+                <div class="lamp-bulb"></div>
+                <div class="status">TẮT</div>
+            </div>
+            
+            <div class="switch off" id="switch">
+                <div class="switch-handle"></div>
+            </div>
+            
+            <div class="status">Công tắc: TẮT</div>
+        </div>
+        
+        <div class="controls">
+            <h2>Điều khiển</h2>
+            
+            <button id="toggleSwitch">Bật/Tắt công tắc</button>
+            <button id="runSimulation">Chạy mô phỏng (10 lần)</button>
+            <button id="reset">Đặt lại mô phỏng</button>
+            
+            <div class="log" id="log">
+                <div class="log-entry">Nhấn nút "Chạy mô phỏng" để bắt đầu...</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="diagram">
+        <h2>Sơ đồ lớp (UML)</h2>
+        <p>Mối quan hệ giữa lớp Công tắc (SwitchButton) và lớp Bóng đèn (ElectricLamp)</p>
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNDAwIDMwMCI+PHJlY3QgeD0iNTAiIHk9IjUwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2Y1ZjVmNSIgc3Ryb2tlPSIjMzMzIi8+PHRleHQgeD0iNjAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIj5Td2l0Y2hCdXR0b248L3RleHQ+PHRleHQgeD0iNjAiIHk9IjEwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj4tc3RhdHVzOiBib29sZWFuPC90ZXh0Pjx0ZXh0IHg9IjYwIiB5PSIxMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+LmxhbXA6IEVsZWN0cmljTGFtcDwvdGV4dD48dGV4dCB4PSI2MCIgeT0iMTQwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSJib2xkIj4rU3dpdGNoQnV0dG9uKCk8L3RleHQ+PHRleHQgeD0iNjAiIHk9IjE2MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iYm9sZCI+K2Nvbm5lY3RUb0xhbXAoRWxlY3RyaWNMYW1wKTogdm9pZDwvdGV4dD48dGV4dCB4PSI2MCIgeT0iMTgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSJib2xkIj4rc3dpdGNoT2ZmKCk6IHZvaWQ8L3RleHQ+PHRleHQgeD0iNjAiIHk9IjIwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iYm9sZCI+K3N3aXRjaE9uKCk6IHZvaWQ8L3RleHQ+PHJlY3QgeD0iMjMwIiB5PSI1MCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNmNWY1ZjUiIHN0cm9rZT0iIzMzMyIvPjx0ZXh0IHg9IjI0MCIgeT0iNzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkVsZWN0cmljTGFtcDwvdGV4dD48dGV4dCB4PSIyNDAiIHk9IjEwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIj4tc3RhdHVzOiBib29sZWFuPC90ZXh0Pjx0ZXh0IHg9IjI0MCIgeT0iMTIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSJib2xkIj4rRWxlY3RyaWNMYW1wKCk8L3RleHQ+PHRleHQgeD0iMjQwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiPit0dXJuT2ZmKCk6IHZvaWQ8L3RleHQ+PHRleHQgeD0iMjQwIiB5PSIxNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiPit0dXJuT24oKTogdm9pZDwvdGV4dD48cGF0aCBkPSJNIDE3MCAxMTAgQyAyMTAgMTEwIDIxMCAxMTAgMjMwIDExMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzMzIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIyMDAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiPmNvbm5lY3RUb0xhbXA8L3RleHQ+PC9zdmc+" alt="Sơ đồ lớp UML">
+    </div>
+    
+    <div class="code">
+        <h2>Mã nguồn JavaScript</h2>
+        <pre><code>// Lớp Bóng đèn
+class ElectricLamp {
+    constructor() {
+        this.status = false; // false = tắt, true = bật
+    }
+    
+    // Bật đèn
+    turnOn() {
+        this.status = true;
+        return this.status;
+    }
+    
+    // Tắt đèn
+    turnOff() {
+        this.status = false;
+        return this.status;
+    }
+    
+    // Trả về trạng thái hiện tại
+    getStatus() {
+        return this.status;
+    }
+}
 
+// Lớp Công tắc
+class SwitchButton {
+    constructor() {
+        this.status = false; // false = tắt, true = bật
+        this.lamp = null;    // Chưa kết nối với bóng đèn
+    }
+    
+    // Kết nối với bóng đèn
+    connectToLamp(lamp) {
+        this.lamp = lamp;
+    }
+    
+    // Bật công tắc
+    switchOn() {
+        this.status = true;
+        if (this.lamp) {
+            this.lamp.turnOn();
+        }
+        return this.status;
+    }
+    
+    // Tắt công tắc
+    switchOff() {
+        this.status = false;
+        if (this.lamp) {
+            this.lamp.turnOff();
+        }
+        return this.status;
+    }
+    
+    // Trả về trạng thái hiện tại
+    getStatus() {
+        return this.status;
+    }
+    
+    // Chuyển trạng thái công tắc
+    toggle() {
+        if (this.status) {
+            this.switchOff();
+        } else {
+            this.switchOn();
+        }
+        return this.status;
+    }
+}
+
+// Tạo đối tượng
+const mySwitch = new SwitchButton();
+const myLamp = new ElectricLamp();
+
+// Kết nối công tắc với bóng đèn
+mySwitch.connectToLamp(myLamp);</code></pre>
+    </div>
+
+    <script>
+        // Lớp Bóng đèn
+        class ElectricLamp {
+            constructor() {
+                this.status = false; // false = tắt, true = bật
+            }
+            
+            // Bật đèn
+            turnOn() {
+                this.status = true;
+                return this.status;
+            }
+            
+            // Tắt đèn
+            turnOff() {
+                this.status = false;
+                return this.status;
+            }
+            
+            // Trả về trạng thái hiện tại
+            getStatus() {
+                return this.status;
+            }
+        }
+
+        // Lớp Công tắc
+        class SwitchButton {
+            constructor() {
+                this.status = false; // false = tắt, true = bật
+                this.lamp = null;    // Chưa kết nối với bóng đèn
+            }
+            
+            // Kết nối với bóng đèn
+            connectToLamp(lamp) {
+                this.lamp = lamp;
+            }
+            
+            // Bật công tắc
+            switchOn() {
+                this.status = true;
+                if (this.lamp) {
+                    this.lamp.turnOn();
+                }
+                return this.status;
+            }
+            
+            // Tắt công tắc
+            switchOff() {
+                this.status = false;
+                if (this.lamp) {
+                    this.lamp.turnOff();
+                }
+                return this.status;
+            }
+            
+            // Trả về trạng thái hiện tại
+            getStatus() {
+                return this.status;
+            }
+            
+            // Chuyển trạng thái công tắc
+            toggle() {
+                if (this.status) {
+                    this.switchOff();
+                } else {
+                    this.switchOn();
+                }
+                return this.status;
+            }
+        }
+
+        // Tạo đối tượng
+        const mySwitch = new SwitchButton();
+        const myLamp = new ElectricLamp();
+
+        // Kết nối công tắc với bóng đèn
+        mySwitch.connectToLamp(myLamp);
+
+        // Tham chiếu đến các phần tử DOM
+        const lampElement = document.getElementById('lamp');
+        const switchElement = document.getElementById('switch');
+        const toggleButton = document.getElementById('toggleSwitch');
+        const runSimulationButton = document.getElementById('runSimulation');
+        const resetButton = document.getElementById('reset');
+        const logElement = document.getElementById('log');
+        
+        // Cập nhật giao diện dựa trên trạng thái
+        function updateUI() {
+            // Cập nhật bóng đèn
+            if (myLamp.getStatus()) {
+                lampElement.classList.remove('off');
+                lampElement.classList.add('on');
+                lampElement.querySelector('.status').textContent = 'BẬT';
+            } else {
+                lampElement.classList.remove('on');
+                lampElement.classList.add('off');
+                lampElement.querySelector('.status').textContent = 'TẮT';
+            }
+            
+            // Cập nhật công tắc
+            if (mySwitch.getStatus()) {
+                switchElement.classList.remove('off');
+                switchElement.classList.add('on');
+                switchElement.nextElementSibling.textContent = 'Công tắc: BẬT';
+            } else {
+                switchElement.classList.remove('on');
+                switchElement.classList.add('off');
+                switchElement.nextElementSibling.textContent = 'Công tắc: TẮT';
+            }
+        }
+        
+        // Thêm một mục vào log
+        function addLogEntry(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = message;
+            logElement.appendChild(entry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Sự kiện khi nhấn nút bật/tắt công tắc
+        toggleButton.addEventListener('click', function() {
+            const newStatus = mySwitch.toggle();
+            const lampStatus = myLamp.getStatus();
+            
+            addLogEntry(`Công tắc đã được ${newStatus ? 'BẬT' : 'TẮT'}. Bóng đèn: ${lampStatus ? 'BẬT' : 'TẮT'}`);
+            updateUI();
+        });
+        
+        // Sự kiện khi nhấn nút chạy mô phỏng
+        runSimulationButton.addEventListener('click', function() {
+            logElement.innerHTML = '<div class="log-entry">Bắt đầu mô phỏng...</div>';
+            
+            // Chạy mô phỏng 10 lần
+            for (let i = 1; i <= 10; i++) {
+                // Tạo độ trễ giữa các lần để có thể nhìn thấy sự thay đổi
+                setTimeout(() => {
+                    // Chọn ngẫu nhiên để bật hoặc tắt
+                    const action = Math.random() > 0.5 ? 'BẬT' : 'TẮT';
+                    
+                    if (action === 'BẬT') {
+                        mySwitch.switchOn();
+                    } else {
+                        mySwitch.switchOff();
+                    }
+                    
+                    const lampStatus = myLamp.getStatus();
+                    addLogEntry(`Lần ${i}: Công tắc ${action}. Bóng đèn: ${lampStatus ? 'BẬT' : 'TẮT'}`);
+                    updateUI();
+                }, i * 500); // Mỗi 0.5 giây thực hiện một lần
+            }
+        });
+        
+        // Sự kiện khi nhấn nút đặt lại
+        resetButton.addEventListener('click', function() {
+            mySwitch.switchOff();
+            logElement.innerHTML = '<div class="log-entry">Đã đặt lại mô phỏng...</div>';
+            updateUI();
+        });
+        
+        // Sự kiện khi nhấn vào công tắc
+        switchElement.addEventListener('click', function() {
+            mySwitch.toggle();
+            const lampStatus = myLamp.getStatus();
+            addLogEntry(`Công tắc được nhấn: ${mySwitch.getStatus() ? 'BẬT' : 'TẮT'}. Bóng đèn: ${lampStatus ? 'BẬT' : 'TẮT'}`);
+            updateUI();
+        });
+        
+        // Khởi tạo giao diện
+        updateUI();
+    </script>
+</body>
+</html>
