@@ -1,1 +1,691 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Lái Xe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 800px;
+            max-width: 95%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        header {
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffcc00, #ff6600);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .score {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #ffcc00;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .key {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .key kbd {
+            background: #fff;
+            color: #333;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        canvas {
+            background: #222;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: block;
+            margin: 0 auto;
+            border: 4px solid #444;
+        }
+        
+        .buttons {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        button {
+            background: linear-gradient(to bottom, #ffcc00, #ff6600);
+            color: #222;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            text-align: left;
+            max-width: 800px;
+        }
+        
+        .instructions h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 10;
+            display: none;
+            border: 3px solid #ff6600;
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.7);
+        }
+        
+        .game-over h2 {
+            font-size: 3rem;
+            color: #ff6600;
+            margin-bottom: 20px;
+        }
+        
+        .final-score {
+            font-size: 2rem;
+            color: #ffcc00;
+            margin-bottom: 30px;
+        }
+        
+        .obstacle-example {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff0000, #990000);
+            border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .reward-example {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ffcc00, #ff6600);
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .game-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>Game Lái Xe</h1>
+            <p class="subtitle">Sử dụng phím mũi tên để điều khiển và phím Ctrl để tăng tốc</p>
+        </header>
+        
+        <div class="game-stats">
+            <div class="score-container">
+                <span>Điểm số:</span>
+                <span class="score" id="score">0</span>
+            </div>
+            <div>Chướng ngại vật: <span class="obstacle-example"></span></div>
+            <div>Phần thưởng: <span class="reward-example"></span></div>
+        </div>
+        
+        <div class="controls">
+            <div class="key">
+                <kbd>←</kbd> <kbd>→</kbd> Thay đổi hướng
+            </div>
+            <div class="key">
+                <kbd>Ctrl</kbd> Tăng tốc
+            </div>
+            <div class="key">
+                <kbd>R</kbd> Chơi lại
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div class="buttons">
+            <button id="startBtn">Bắt đầu chơi</button>
+            <button id="restartBtn">Chơi lại</button>
+        </div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>Game Over!</h2>
+            <div class="final-score">Điểm của bạn: <span id="finalScore">0</span></div>
+            <button id="playAgainBtn">Chơi lại</button>
+        </div>
+        
+        <div class="instructions">
+            <h2>Hướng dẫn chơi</h2>
+            <ul>
+                <li>Sử dụng phím <strong>MŨI TÊN TRÁI</strong> và <strong>MŨI TÊN PHẢI</strong> để điều khiển hướng xe</li>
+                <li>Giữ phím <strong>Ctrl</strong> để tăng tốc độ xe</li>
+                <li>Thu thập <span class="reward-example"></span> <strong>phần thưởng</strong> để tăng điểm số</li>
+                <li>Tránh <span class="obstacle-example"></span> <strong>chướng ngại vật</strong> - nếu đâm phải, bạn sẽ thua</li>
+                <li>Mục tiêu: Đạt điểm số cao nhất có thể!</li>
+            </ul>
+        </div>
+    </div>
 
+    <script>
+        // Lớp Xe
+        class Car {
+            constructor() {
+                this.x = 400; // Vị trí ban đầu giữa màn hình
+                this.y = 400;
+                this.width = 40;
+                this.height = 70;
+                this.speed = 3;
+                this.angle = 0; // Hướng di chuyển (0 = hướng lên)
+                this.boosted = false;
+                this.color = '#3498db';
+            }
+            
+            // Vẽ xe lên canvas
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                // Thân xe
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+                
+                // Cửa kính
+                ctx.fillStyle = '#aed6f1';
+                ctx.fillRect(-this.width/4, -this.height/4, this.width/2, this.height/4);
+                
+                // Đèn trước
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(-this.width/4, -this.height/2, this.width/2, 5);
+                
+                // Đèn sau
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(-this.width/4, this.height/2 - 5, this.width/2, 5);
+                
+                // Bánh xe
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-this.width/2 - 3, -this.height/4, 6, this.height/2);
+                ctx.fillRect(this.width/2 - 3, -this.height/4, 6, this.height/2);
+                
+                ctx.restore();
+            }
+            
+            // Cập nhật vị trí xe
+            update() {
+                // Tính toán chuyển động dựa trên góc
+                const speed = this.boosted ? this.speed * 1.8 : this.speed;
+                this.x += Math.sin(this.angle) * speed;
+                this.y -= Math.cos(this.angle) * speed;
+                
+                // Giới hạn xe trong canvas
+                if (this.x < 0) this.x = 0;
+                if (this.x > 800) this.x = 800;
+                if (this.y < 0) this.y = 0;
+                if (this.y > 500) this.y = 500;
+            }
+            
+            // Tăng tốc
+            boost() {
+                this.boosted = true;
+                this.color = '#e74c3c'; // Đổi màu khi tăng tốc
+            }
+            
+            // Giảm tốc
+            unboost() {
+                this.boosted = false;
+                this.color = '#3498db';
+            }
+            
+            // Xoay xe
+            rotate(direction) {
+                const rotationSpeed = 0.05;
+                if (direction === 'left') {
+                    this.angle -= rotationSpeed;
+                } else if (direction === 'right') {
+                    this.angle += rotationSpeed;
+                }
+            }
+        }
+
+        // Lớp Chướng ngại vật
+        class Obstacle {
+            constructor() {
+                this.width = Math.random() * 50 + 30;
+                this.height = Math.random() * 50 + 30;
+                this.x = Math.random() * (800 - this.width);
+                this.y = Math.random() * (500 - this.height);
+                this.color = `hsl(${Math.random() * 60}, 100%, 40%)`; // Màu đỏ cam
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Thêm chi tiết cho chướng ngại vật
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
+        }
+
+        // Lớp Phần thưởng
+        class Reward {
+            constructor() {
+                this.size = 25;
+                this.x = Math.random() * (800 - this.size);
+                this.y = Math.random() * (500 - this.size);
+                this.collected = false;
+                this.type = Math.floor(Math.random() * 3); // Loại phần thưởng
+            }
+            
+            draw(ctx) {
+                if (this.collected) return;
+                
+                ctx.save();
+                ctx.translate(this.x + this.size/2, this.y + this.size/2);
+                
+                // Vẽ phần thưởng tùy theo loại
+                switch(this.type) {
+                    case 0: // Đồng xu
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        ctx.fillStyle = '#ff9900';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.size/3, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                        
+                    case 1: // Kim cương
+                        ctx.fillStyle = '#00ccff';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -this.size/2);
+                        ctx.lineTo(this.size/2, 0);
+                        ctx.lineTo(0, this.size/2);
+                        ctx.lineTo(-this.size/2, 0);
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                        
+                    case 2: // Trái tim
+                        ctx.fillStyle = '#ff3366';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -this.size/3);
+                        ctx.bezierCurveTo(
+                            this.size/3, -this.size/2,
+                            this.size/2, 0,
+                            0, this.size/3
+                        );
+                        ctx.bezierCurveTo(
+                            -this.size/2, 0,
+                            -this.size/3, -this.size/2,
+                            0, -this.size/3
+                        );
+                        ctx.fill();
+                        break;
+                }
+                
+                ctx.restore();
+            }
+        }
+
+        // Lớp Game
+        class RacingGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.car = new Car();
+                this.obstacles = [];
+                this.rewards = [];
+                this.score = 0;
+                this.gameOver = false;
+                this.gameStarted = false;
+                this.keys = {};
+                this.animationId = null;
+                this.roadLines = [];
+                
+                this.init();
+                this.setupEventListeners();
+            }
+            
+            init() {
+                // Tạo chướng ngại vật
+                for (let i = 0; i < 8; i++) {
+                    this.obstacles.push(new Obstacle());
+                }
+                
+                // Tạo phần thưởng
+                for (let i = 0; i < 15; i++) {
+                    this.rewards.push(new Reward());
+                }
+                
+                // Tạo vạch kẻ đường
+                for (let i = 0; i < 10; i++) {
+                    this.roadLines.push({
+                        x: 400,
+                        y: i * 100 - 50,
+                        width: 10,
+                        height: 30
+                    });
+                }
+            }
+            
+            setupEventListeners() {
+                // Xử lý sự kiện bàn phím
+                window.addEventListener('keydown', (e) => {
+                    this.keys[e.key] = true;
+                    
+                    // Xử lý phím Ctrl để tăng tốc
+                    if (e.key === 'Control') {
+                        this.car.boost();
+                    }
+                    
+                    // Xử lý phím R để chơi lại
+                    if (e.key === 'r' || e.key === 'R') {
+                        this.restart();
+                    }
+                });
+                
+                window.addEventListener('keyup', (e) => {
+                    this.keys[e.key] = false;
+                    
+                    if (e.key === 'Control') {
+                        this.car.unboost();
+                    }
+                });
+                
+                // Xử lý nút bắt đầu và chơi lại
+                document.getElementById('startBtn').addEventListener('click', () => {
+                    this.start();
+                });
+                
+                document.getElementById('restartBtn').addEventListener('click', () => {
+                    this.restart();
+                });
+                
+                document.getElementById('playAgainBtn').addEventListener('click', () => {
+                    this.restart();
+                });
+            }
+            
+            start() {
+                if (!this.gameStarted) {
+                    this.gameStarted = true;
+                    this.gameOver = false;
+                    this.score = 0;
+                    document.getElementById('score').textContent = this.score;
+                    document.getElementById('gameOver').style.display = 'none';
+                    this.gameLoop();
+                }
+            }
+            
+            restart() {
+                this.car = new Car();
+                this.obstacles = [];
+                this.rewards = [];
+                this.score = 0;
+                this.gameOver = false;
+                this.gameStarted = false;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('gameOver').style.display = 'none';
+                
+                this.init();
+                this.start();
+            }
+            
+            update() {
+                // Cập nhật vị trí xe
+                this.car.update();
+                
+                // Xử lý điều khiển
+                if (this.keys['ArrowLeft']) {
+                    this.car.rotate('left');
+                }
+                if (this.keys['ArrowRight']) {
+                    this.car.rotate('right');
+                }
+                
+                // Di chuyển vạch kẻ đường (tạo hiệu ứng chuyển động)
+                for (let line of this.roadLines) {
+                    line.y += this.car.speed * (this.car.boosted ? 1.8 : 1);
+                    if (line.y > 550) {
+                        line.y = -50;
+                    }
+                }
+                
+                // Kiểm tra va chạm với chướng ngại vật
+                for (let obstacle of this.obstacles) {
+                    if (this.checkCollision(this.car, obstacle)) {
+                        this.endGame();
+                        return;
+                    }
+                }
+                
+                // Kiểm tra thu thập phần thưởng
+                for (let reward of this.rewards) {
+                    if (!reward.collected && this.checkCollision(this.car, reward)) {
+                        reward.collected = true;
+                        this.score += 10;
+                        document.getElementById('score').textContent = this.score;
+                        
+                        // Tạo phần thưởng mới
+                        setTimeout(() => {
+                            this.rewards.push(new Reward());
+                        }, 1000);
+                    }
+                }
+            }
+            
+            draw() {
+                const ctx = this.ctx;
+                
+                // Xóa canvas
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Vẽ nền đường
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Vẽ vạch kẻ đường
+                ctx.fillStyle = '#ecf0f1';
+                for (let line of this.roadLines) {
+                    ctx.fillRect(line.x - line.width/2, line.y, line.width, line.height);
+                }
+                
+                // Vẽ lề đường
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(0, 0, 100, this.canvas.height);
+                ctx.fillRect(700, 0, 100, this.canvas.height);
+                
+                // Vẽ chướng ngại vật
+                for (let obstacle of this.obstacles) {
+                    obstacle.draw(ctx);
+                }
+                
+                // Vẽ phần thưởng
+                for (let reward of this.rewards) {
+                    reward.draw(ctx);
+                }
+                
+                // Vẽ xe
+                this.car.draw(ctx);
+                
+                // Vẽ tốc độ
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '16px Arial';
+                ctx.fillText(`Tốc độ: ${this.car.boosted ? 'CAO' : 'BÌNH THƯỜNG'}`, 20, 30);
+                
+                // Vẽ hướng xe
+                ctx.fillText(`Hướng: ${this.getDirectionText()}`, 20, 60);
+            }
+            
+            getDirectionText() {
+                const angle = (this.car.angle * 180 / Math.PI) % 360;
+                if (angle < 45 || angle > 315) return 'THẲNG';
+                if (angle >= 45 && angle < 135) return 'PHẢI';
+                if (angle >= 135 && angle < 225) return 'SAU';
+                return 'TRÁI';
+            }
+            
+            // Kiểm tra va chạm
+            checkCollision(car, object) {
+                const carLeft = car.x - car.width/2;
+                const carRight = car.x + car.width/2;
+                const carTop = car.y - car.height/2;
+                const carBottom = car.y + car.height/2;
+                
+                const objLeft = object.x;
+                const objRight = object.x + (object.width || object.size);
+                const objTop = object.y;
+                const objBottom = object.y + (object.height || object.size);
+                
+                return carRight > objLeft &&
+                       carLeft < objRight &&
+                       carBottom > objTop &&
+                       carTop < objBottom;
+            }
+            
+            endGame() {
+                this.gameOver = true;
+                this.gameStarted = false;
+                cancelAnimationFrame(this.animationId);
+                
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('gameOver').style.display = 'block';
+            }
+            
+            gameLoop() {
+                if (this.gameOver) return;
+                
+                this.update();
+                this.draw();
+                
+                this.animationId = requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Khởi tạo game khi trang được tải
+        window.addEventListener('load', () => {
+            const game = new RacingGame();
+        });
+    </script>
+</body>
+</html>
