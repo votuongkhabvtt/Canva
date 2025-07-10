@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Lái Xe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -212,6 +213,26 @@
             vertical-align: middle;
         }
         
+        .car-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            width: 300px;
+        }
+        
+        .info-card h3 {
+            color: #ffcc00;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -226,13 +247,18 @@
                 flex-direction: column;
                 gap: 10px;
             }
+            
+            .car-info {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <header>
-            <h1>Game Lái Xe</h1>
+            <h1><i class="fas fa-car"></i> Game Lái Xe</h1>
             <p class="subtitle">Sử dụng phím mũi tên để điều khiển và phím Ctrl để tăng tốc</p>
         </header>
         
@@ -247,10 +273,16 @@
         
         <div class="controls">
             <div class="key">
-                <kbd>←</kbd> <kbd>→</kbd> Thay đổi hướng
+                <kbd><i class="fas fa-arrow-left"></i></kbd> <kbd><i class="fas fa-arrow-right"></i></kbd> Thay đổi hướng
             </div>
             <div class="key">
                 <kbd>Ctrl</kbd> Tăng tốc
+            </div>
+            <div class="key">
+                <kbd><i class="fas fa-arrow-up"></i></kbd> Tăng tốc độ
+            </div>
+            <div class="key">
+                <kbd><i class="fas fa-arrow-down"></i></kbd> Giảm tốc độ
             </div>
             <div class="key">
                 <kbd>R</kbd> Chơi lại
@@ -260,25 +292,37 @@
         <canvas id="gameCanvas" width="800" height="500"></canvas>
         
         <div class="buttons">
-            <button id="startBtn">Bắt đầu chơi</button>
-            <button id="restartBtn">Chơi lại</button>
+            <button id="startBtn"><i class="fas fa-play"></i> Bắt đầu chơi</button>
+            <button id="restartBtn"><i class="fas fa-redo"></i> Chơi lại</button>
         </div>
         
         <div class="game-over" id="gameOver">
-            <h2>Game Over!</h2>
+            <h2><i class="fas fa-car-crash"></i> Game Over!</h2>
             <div class="final-score">Điểm của bạn: <span id="finalScore">0</span></div>
-            <button id="playAgainBtn">Chơi lại</button>
+            <button id="playAgainBtn"><i class="fas fa-redo"></i> Chơi lại</button>
         </div>
         
         <div class="instructions">
-            <h2>Hướng dẫn chơi</h2>
+            <h2><i class="fas fa-info-circle"></i> Hướng dẫn chơi</h2>
             <ul>
-                <li>Sử dụng phím <strong>MŨI TÊN TRÁI</strong> và <strong>MŨI TÊN PHẢI</strong> để điều khiển hướng xe</li>
-                <li>Giữ phím <strong>Ctrl</strong> để tăng tốc độ xe</li>
-                <li>Thu thập <span class="reward-example"></span> <strong>phần thưởng</strong> để tăng điểm số</li>
-                <li>Tránh <span class="obstacle-example"></span> <strong>chướng ngại vật</strong> - nếu đâm phải, bạn sẽ thua</li>
-                <li>Mục tiêu: Đạt điểm số cao nhất có thể!</li>
+                <li><i class="fas fa-arrow-left"></i> <i class="fas fa-arrow-right"></i> Sử dụng phím <strong>MŨI TÊN TRÁI</strong> và <strong>MŨI TÊN PHẢI</strong> để điều khiển hướng xe</li>
+                <li><i class="fas fa-bolt"></i> Giữ phím <strong>Ctrl</strong> để tăng tốc độ xe</li>
+                <li><i class="fas fa-arrow-up"></i> <i class="fas fa-arrow-down"></i> Sử dụng phím <strong>MŨI TÊN LÊN/XUỐNG</strong> để tăng/giảm tốc độ cơ bản</li>
+                <li><i class="fas fa-coins"></i> Thu thập <span class="reward-example"></span> <strong>phần thưởng</strong> để tăng điểm số</li>
+                <li><i class="fas fa-road"></i> Tránh <span class="obstacle-example"></span> <strong>chướng ngại vật</strong> - nếu đâm phải, bạn sẽ thua</li>
+                <li><i class="fas fa-trophy"></i> Mục tiêu: Đạt điểm số cao nhất có thể!</li>
             </ul>
+        </div>
+        
+        <div class="car-info">
+            <div class="info-card">
+                <h3><i class="fas fa-car"></i> Chiếc xe</h3>
+                <p>Xe được vẽ ở giữa màn hình, mặc định di chuyển hướng lên trên với tốc độ chậm. Bạn có thể điều khiển hướng di chuyển và tốc độ của xe.</p>
+            </div>
+            <div class="info-card">
+                <h3><i class="fas fa-cogs"></i> Cơ chế game</h3>
+                <p>Game sử dụng lập trình hướng đối tượng trong JavaScript với các lớp Car, Obstacle, Reward và GameManager để quản lý trò chơi.</p>
+            </div>
         </div>
     </div>
 
@@ -352,6 +396,20 @@
                 this.color = '#3498db';
             }
             
+            // Tăng tốc độ cơ bản
+            increaseSpeed() {
+                if (this.speed < 6) {
+                    this.speed += 0.5;
+                }
+            }
+            
+            // Giảm tốc độ cơ bản
+            decreaseSpeed() {
+                if (this.speed > 1) {
+                    this.speed -= 0.5;
+                }
+            }
+            
             // Xoay xe
             rotate(direction) {
                 const rotationSpeed = 0.05;
@@ -381,6 +439,13 @@
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(this.x, this.y, this.width, this.height);
+                
+                // Thêm chữ "X"
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('X', this.x + this.width/2, this.y + this.height/2);
             }
         }
 
@@ -392,6 +457,8 @@
                 this.y = Math.random() * (500 - this.size);
                 this.collected = false;
                 this.type = Math.floor(Math.random() * 3); // Loại phần thưởng
+                this.colors = ['#ffcc00', '#00ccff', '#ff3366'];
+                this.names = ['Đồng xu', 'Kim cương', 'Trái tim'];
             }
             
             draw(ctx) {
@@ -403,7 +470,7 @@
                 // Vẽ phần thưởng tùy theo loại
                 switch(this.type) {
                     case 0: // Đồng xu
-                        ctx.fillStyle = '#ffcc00';
+                        ctx.fillStyle = this.colors[0];
                         ctx.beginPath();
                         ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
                         ctx.fill();
@@ -412,10 +479,14 @@
                         ctx.beginPath();
                         ctx.arc(0, 0, this.size/3, 0, Math.PI * 2);
                         ctx.fill();
+                        
+                        ctx.fillStyle = '#000';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.fillText('$', -3, 3);
                         break;
                         
                     case 1: // Kim cương
-                        ctx.fillStyle = '#00ccff';
+                        ctx.fillStyle = this.colors[1];
                         ctx.beginPath();
                         ctx.moveTo(0, -this.size/2);
                         ctx.lineTo(this.size/2, 0);
@@ -423,10 +494,14 @@
                         ctx.lineTo(-this.size/2, 0);
                         ctx.closePath();
                         ctx.fill();
+                        
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
                         break;
                         
                     case 2: // Trái tim
-                        ctx.fillStyle = '#ff3366';
+                        ctx.fillStyle = this.colors[2];
                         ctx.beginPath();
                         ctx.moveTo(0, -this.size/3);
                         ctx.bezierCurveTo(
@@ -447,8 +522,8 @@
             }
         }
 
-        // Lớp Game
-        class RacingGame {
+        // Lớp Quản lý game
+        class GameManager {
             constructor() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
@@ -501,6 +576,14 @@
                     // Xử lý phím R để chơi lại
                     if (e.key === 'r' || e.key === 'R') {
                         this.restart();
+                    }
+                    
+                    // Xử lý phím mũi tên lên/xuống
+                    if (e.key === 'ArrowUp') {
+                        this.car.increaseSpeed();
+                    }
+                    if (e.key === 'ArrowDown') {
+                        this.car.decreaseSpeed();
                     }
                 });
                 
@@ -628,13 +711,12 @@
                 // Vẽ xe
                 this.car.draw(ctx);
                 
-                // Vẽ tốc độ
+                // Vẽ thông tin xe
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '16px Arial';
-                ctx.fillText(`Tốc độ: ${this.car.boosted ? 'CAO' : 'BÌNH THƯỜNG'}`, 20, 30);
-                
-                // Vẽ hướng xe
-                ctx.fillText(`Hướng: ${this.getDirectionText()}`, 20, 60);
+                ctx.fillText(`Tốc độ: ${this.car.speed.toFixed(1)}`, 20, 30);
+                ctx.fillText(`Tăng tốc: ${this.car.boosted ? 'CÓ' : 'KHÔNG'}`, 20, 60);
+                ctx.fillText(`Hướng: ${this.getDirectionText()}`, 20, 90);
             }
             
             getDirectionText() {
@@ -684,7 +766,7 @@
 
         // Khởi tạo game khi trang được tải
         window.addEventListener('load', () => {
-            const game = new RacingGame();
+            const game = new GameManager();
         });
     </script>
 </body>
