@@ -491,7 +491,6 @@ mySwitch.connectToLamp(myLamp);</code></pre>
             addLogEntry(`Công tắc được nhấn: ${mySwitch.getStatus() ? 'BẬT' : 'TẮT'}. Bóng đèn: ${lampStatus ? 'BẬT' : 'TẮT'}`);
             updateUI();
         });
-        
         // Khởi tạo giao diện
         updateUI();
     </script>
