@@ -1,1 +1,687 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Phỏng Điện Thoại Di Động</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .phone {
+            background: #222;
+            border-radius: 30px;
+            padding: 20px;
+            width: 300px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 5px;
+            background: #333;
+            border-radius: 10px;
+        }
+        
+        .screen {
+            background: #111;
+            border-radius: 20px;
+            flex-grow: 1;
+            padding: 20px;
+            margin: 15px 0;
+            color: #fff;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .phone-name {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .battery-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .battery-level {
+            height: 20px;
+            background: linear-gradient(to right, #ff0000, #ff9900, #66ff00);
+            border-radius: 5px;
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        input {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .message {
+            background: rgba(74, 0, 224, 0.2);
+            padding: 12px;
+            border-radius: 15px;
+            border-bottom-left-radius: 0;
+            max-width: 80%;
+            align-self: flex-start;
+            border: 1px solid #4a00e0;
+        }
+        
+        .message.sent {
+            background: rgba(142, 45, 226, 0.2);
+            border: 1px solid #8e2de2;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 15px;
+            align-self: flex-end;
+        }
+        
+        .message.received {
+            background: rgba(0, 100, 255, 0.2);
+            border: 1px solid #0064ff;
+        }
+        
+        .inbox, .sent-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+        
+        .inbox h3, .sent-box h3 {
+            margin-bottom: 10px;
+            color: #8e2de2;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            max-width: 1000px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions h2 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .log {
+            background: #111;
+            color: #0f0;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            height: 100px;
+            overflow-y: auto;
+        }
+        
+        .power-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff0000;
+        }
+        
+        .indicator.on {
+            background: #00ff00;
+            box-shadow: 0 0 10px #0f0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .phone {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MÔ PHỎNG ĐIỆN THOẠI DI ĐỘNG</h1>
+        <p class="subtitle">Lập trình hướng đối tượng trong JavaScript - Mô phỏng lớp Mobile</p>
+    </header>
+    
+    <div class="container">
+        <div class="phone">
+            <div class="phone-name">NOKIA</div>
+            <div class="screen">
+                <div class="battery-container">
+                    <div class="power-status">
+                        <div class="indicator" id="nokia-indicator"></div>
+                        <span id="nokia-status">Tắt</span>
+                    </div>
+                    <div style="flex-grow: 1; padding: 0 10px;">
+                        <div class="battery-level" id="nokia-battery" style="width: 100%;"></div>
+                    </div>
+                    <span id="nokia-battery-text">100%</span>
+                </div>
+                
+                <div class="inbox">
+                    <h3>Hộp thư đến</h3>
+                    <div id="nokia-inbox">Chưa có tin nhắn</div>
+                </div>
+                
+                <div class="sent-box">
+                    <h3>Tin đã gửi</h3>
+                    <div id="nokia-sent">Chưa có tin nhắn</div>
+                </div>
+                
+                <div class="log" id="nokia-log"></div>
+            </div>
+            
+            <div class="message-input">
+                <input type="text" id="nokia-draft" placeholder="Soạn tin nhắn...">
+                <button id="nokia-compose">Soạn</button>
+            </div>
+            
+            <div class="controls">
+                <button id="nokia-power">Bật</button>
+                <button id="nokia-charge">Sạc pin</button>
+                <button id="nokia-send" disabled>Gửi cho iPhone</button>
+                <button id="nokia-view-inbox" disabled>Xem hộp thư</button>
+                <button id="nokia-view-sent" disabled>Xem tin đã gửi</button>
+                <button id="nokia-clear">Xóa soạn thảo</button>
+            </div>
+        </div>
+        
+        <div class="phone">
+            <div class="phone-name">iPhone</div>
+            <div class="screen">
+                <div class="battery-container">
+                    <div class="power-status">
+                        <div class="indicator" id="iphone-indicator"></div>
+                        <span id="iphone-status">Tắt</span>
+                    </div>
+                    <div style="flex-grow: 1; padding: 0 10px;">
+                        <div class="battery-level" id="iphone-battery" style="width: 100%;"></div>
+                    </div>
+                    <span id="iphone-battery-text">100%</span>
+                </div>
+                
+                <div class="inbox">
+                    <h3>Hộp thư đến</h3>
+                    <div id="iphone-inbox">Chưa có tin nhắn</div>
+                </div>
+                
+                <div class="sent-box">
+                    <h3>Tin đã gửi</h3>
+                    <div id="iphone-sent">Chưa có tin nhắn</div>
+                </div>
+                
+                <div class="log" id="iphone-log"></div>
+            </div>
+            
+            <div class="message-input">
+                <input type="text" id="iphone-draft" placeholder="Soạn tin nhắn...">
+                <button id="iphone-compose">Soạn</button>
+            </div>
+            
+            <div class="controls">
+                <button id="iphone-power">Bật</button>
+                <button id="iphone-charge">Sạc pin</button>
+                <button id="iphone-send" disabled>Gửi cho Nokia</button>
+                <button id="iphone-view-inbox" disabled>Xem hộp thư</button>
+                <button id="iphone-view-sent" disabled>Xem tin đã gửi</button>
+                <button id="iphone-clear">Xóa soạn thảo</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>Hướng Dẫn Sử Dụng</h2>
+        <ul>
+            <li><strong>Bật/Tắt:</strong> Bật hoặc tắt điện thoại. Khi tắt, không thể thực hiện các chức năng khác.</li>
+            <li><strong>Sạc pin:</strong> Sạc pin về mức tối đa 100%.</li>
+            <li><strong>Soạn:</strong> Nhập tin nhắn và nhấn nút "Soạn" để lưu vào bản nháp.</li>
+            <li><strong>Gửi:</strong> Gửi tin nhắn đã soạn cho điện thoại khác.</li>
+            <li><strong>Xem hộp thư:</strong> Xem tin nhắn trong hộp thư đến.</li>
+            <li><strong>Xem tin đã gửi:</strong> Xem lịch sử tin nhắn đã gửi.</li>
+            <li><strong>Xóa soạn thảo:</strong> Xóa tin nhắn đang soạn thảo.</li>
+            <li><strong>Mỗi lần sử dụng chức năng:</strong> Pin giảm 1 đơn vị (trừ chức năng sạc).</li>
+            <li><strong>Khi pin = 0:</strong> Điện thoại tự động tắt.</li>
+        </ul>
+        <div class="log" id="system-log">Hệ thống: Chào mừng đến với mô phỏng điện thoại di động!</div>
+    </div>
 
+    <script>
+        // Lớp Mobile đại diện cho điện thoại di động
+        class Mobile {
+            constructor(name) {
+                this.name = name;
+                this.battery = 100;
+                this.isOn = false;
+                this.draftMessage = '';
+                this.inbox = [];
+                this.sentMessages = [];
+                this.logs = [];
+            }
+            
+            // Bật điện thoại
+            turnOn() {
+                if (this.battery <= 0) {
+                    this.addLog("Không thể bật. Pin đã cạn!");
+                    return false;
+                }
+                
+                if (!this.isOn) {
+                    this.isOn = true;
+                    this.useBattery();
+                    this.addLog("Đã bật điện thoại");
+                    return true;
+                }
+                return false;
+            }
+            
+            // Tắt điện thoại
+            turnOff() {
+                if (this.isOn) {
+                    this.isOn = false;
+                    this.addLog("Đã tắt điện thoại");
+                    return true;
+                }
+                return false;
+            }
+            
+            // Sạc pin
+            charge() {
+                this.battery = 100;
+                this.addLog("Đã sạc đầy pin");
+                this.updateUI();
+            }
+            
+            // Soạn tin nhắn
+            composeMessage(message) {
+                if (!this.isOn) {
+                    this.addLog("Không thể soạn tin. Điện thoại đang tắt!");
+                    return false;
+                }
+                
+                if (this.battery <= 0) {
+                    this.addLog("Không thể soạn tin. Pin đã cạn!");
+                    return false;
+                }
+                
+                this.draftMessage = message;
+                this.useBattery();
+                this.addLog(`Đã soạn tin: "${message}"`);
+                return true;
+            }
+            
+            // Gửi tin nhắn đến điện thoại khác
+            sendMessage(receiver) {
+                if (!this.isOn) {
+                    this.addLog("Không thể gửi tin. Điện thoại đang tắt!");
+                    return false;
+                }
+                
+                if (this.battery <= 0) {
+                    this.addLog("Không thể gửi tin. Pin đã cạn!");
+                    return false;
+                }
+                
+                if (this.draftMessage.trim() === '') {
+                    this.addLog("Không có tin nhắn để gửi!");
+                    return false;
+                }
+                
+                if (!receiver.isOn) {
+                    this.addLog(`Không thể gửi tin. ${receiver.name} đang tắt!`);
+                    return false;
+                }
+                
+                // Gửi tin nhắn
+                receiver.receiveMessage(this.draftMessage, this.name);
+                this.sentMessages.push(this.draftMessage);
+                this.addLog(`Đã gửi tin nhắn đến ${receiver.name}`);
+                this.draftMessage = '';
+                this.useBattery();
+                return true;
+            }
+            
+            // Nhận tin nhắn từ điện thoại khác
+            receiveMessage(message, senderName) {
+                if (!this.isOn) return false;
+                
+                this.inbox.push({message, sender: senderName});
+                this.addLog(`Nhận tin nhắn mới từ ${senderName}`);
+                return true;
+            }
+            
+            // Xem hộp thư đến
+            viewInbox() {
+                if (!this.isOn) {
+                    this.addLog("Không thể xem hộp thư. Điện thoại đang tắt!");
+                    return [];
+                }
+                
+                if (this.battery <= 0) {
+                    this.addLog("Không thể xem hộp thư. Pin đã cạn!");
+                    return [];
+                }
+                
+                this.useBattery();
+                this.addLog("Đã xem hộp thư đến");
+                return this.inbox;
+            }
+            
+            // Xem tin nhắn đã gửi
+            viewSentMessages() {
+                if (!this.isOn) {
+                    this.addLog("Không thể xem tin đã gửi. Điện thoại đang tắt!");
+                    return [];
+                }
+                
+                if (this.battery <= 0) {
+                    this.addLog("Không thể xem tin đã gửi. Pin đã cạn!");
+                    return [];
+                }
+                
+                this.useBattery();
+                this.addLog("Đã xem tin đã gửi");
+                return this.sentMessages;
+            }
+            
+            // Sử dụng pin khi thực hiện chức năng
+            useBattery() {
+                if (this.battery > 0) {
+                    this.battery--;
+                    
+                    // Tự động tắt khi pin cạn
+                    if (this.battery === 0) {
+                        this.isOn = false;
+                        this.addLog("Pin đã cạn. Tự động tắt!");
+                    }
+                }
+            }
+            
+            // Thêm log
+            addLog(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                this.logs.push(`[${timestamp}] ${message}`);
+                if (this.logs.length > 5) this.logs.shift();
+            }
+            
+            // Cập nhật giao diện
+            updateUI() {
+                const prefix = this.name.toLowerCase();
+                
+                // Cập nhật pin
+                document.getElementById(`${prefix}-battery`).style.width = `${this.battery}%`;
+                document.getElementById(`${prefix}-battery-text`).textContent = `${this.battery}%`;
+                
+                // Cập nhật trạng thái
+                document.getElementById(`${prefix}-status`).textContent = this.isOn ? 'Bật' : 'Tắt';
+                document.getElementById(`${prefix}-indicator`).className = `indicator ${this.isOn ? 'on' : ''}`;
+                
+                // Cập nhật hộp thư đến
+                const inboxElement = document.getElementById(`${prefix}-inbox`);
+                if (this.inbox.length === 0) {
+                    inboxElement.innerHTML = 'Chưa có tin nhắn';
+                } else {
+                    inboxElement.innerHTML = this.inbox.map(msg => 
+                        `<div class="message received">${msg.sender}: ${msg.message}</div>`
+                    ).join('');
+                }
+                
+                // Cập nhật tin đã gửi
+                const sentElement = document.getElementById(`${prefix}-sent`);
+                if (this.sentMessages.length === 0) {
+                    sentElement.innerHTML = 'Chưa có tin nhắn';
+                } else {
+                    sentElement.innerHTML = this.sentMessages.map(msg => 
+                        `<div class="message sent">${msg}</div>`
+                    ).join('');
+                }
+                
+                // Cập nhật log
+                document.getElementById(`${prefix}-log`).textContent = this.logs.join('\n');
+                
+                // Cập nhật bản nháp
+                document.getElementById(`${prefix}-draft`).value = this.draftMessage;
+                
+                // Cập nhật trạng thái nút
+                const isActive = this.isOn && this.battery > 0;
+                document.getElementById(`${prefix}-send`).disabled = !isActive || this.draftMessage.trim() === '';
+                document.getElementById(`${prefix}-view-inbox`).disabled = !isActive;
+                document.getElementById(`${prefix}-view-sent`).disabled = !isActive;
+            }
+        }
+
+        // Tạo đối tượng điện thoại
+        const nokia = new Mobile("Nokia");
+        const iphone = new Mobile("iPhone");
+        
+        // Khởi tạo UI
+        function initializeUI() {
+            // Cập nhật giao diện ban đầu
+            nokia.updateUI();
+            iphone.updateUI();
+            
+            // Sự kiện cho Nokia
+            document.getElementById('nokia-power').addEventListener('click', () => {
+                if (nokia.isOn) {
+                    nokia.turnOff();
+                } else {
+                    nokia.turnOn();
+                }
+                nokia.updateUI();
+            });
+            
+            document.getElementById('nokia-charge').addEventListener('click', () => {
+                nokia.charge();
+            });
+            
+            document.getElementById('nokia-compose').addEventListener('click', () => {
+                const message = document.getElementById('nokia-draft').value;
+                nokia.composeMessage(message);
+                nokia.updateUI();
+            });
+            
+            document.getElementById('nokia-send').addEventListener('click', () => {
+                nokia.sendMessage(iphone);
+                nokia.updateUI();
+                iphone.updateUI();
+            });
+            
+            document.getElementById('nokia-view-inbox').addEventListener('click', () => {
+                nokia.viewInbox();
+                nokia.updateUI();
+            });
+            
+            document.getElementById('nokia-view-sent').addEventListener('click', () => {
+                nokia.viewSentMessages();
+                nokia.updateUI();
+            });
+            
+            document.getElementById('nokia-clear').addEventListener('click', () => {
+                nokia.draftMessage = '';
+                nokia.updateUI();
+            });
+            
+            // Sự kiện cho iPhone
+            document.getElementById('iphone-power').addEventListener('click', () => {
+                if (iphone.isOn) {
+                    iphone.turnOff();
+                } else {
+                    iphone.turnOn();
+                }
+                iphone.updateUI();
+            });
+            
+            document.getElementById('iphone-charge').addEventListener('click', () => {
+                iphone.charge();
+            });
+            
+            document.getElementById('iphone-compose').addEventListener('click', () => {
+                const message = document.getElementById('iphone-draft').value;
+                iphone.composeMessage(message);
+                iphone.updateUI();
+            });
+            
+            document.getElementById('iphone-send').addEventListener('click', () => {
+                iphone.sendMessage(nokia);
+                iphone.updateUI();
+                nokia.updateUI();
+            });
+            
+            document.getElementById('iphone-view-inbox').addEventListener('click', () => {
+                iphone.viewInbox();
+                iphone.updateUI();
+            });
+            
+            document.getElementById('iphone-view-sent').addEventListener('click', () => {
+                iphone.viewSentMessages();
+                iphone.updateUI();
+            });
+            
+            document.getElementById('iphone-clear').addEventListener('click', () => {
+                iphone.draftMessage = '';
+                iphone.updateUI();
+            });
+        }
+        
+        // Khởi chạy chương trình khi tải trang
+        window.addEventListener('DOMContentLoaded', initializeUI);
+    </script>
+</body>
+</html>
